@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+function print_usage () {
+    echo 'The function requires two arguments:'
+    echo '    - server name (euler or leonhard)'
+    echo '    - username'
+}
+
+if [[ ${#} -le 1 ]]; then
+   print_usage
+fi
+
+__server_name=$1
+__username=$2
+
+case $1 in
+    --help|-h)
+        print_usage
+        ;;
+    euler|Euler|EULER)
+        __server='euler.ethz.ch'
+        ;;
+    leonhard|Leonhard|LEONHARD)
+        __server='login.leonhard.ethz.ch'
+        ;;
+    *)
+        print_usage
+        ;;
+esac
+
+__command='bjobs'
+if [[ ${#} -eq 3 ]]; then
+    case $3 in
+        -u|--users|--busers)
+            __command='busers'
+            ;;
+        *)
+            __command='bjobs'
+            ;;
+    esac
+fi
+
+gnome-terminal --geometry=90x24 -- ssh $__username@$__server -t watch -n1 $__command
